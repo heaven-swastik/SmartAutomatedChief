@@ -120,57 +120,51 @@ function initAnimations() {
     });
 }
 
-// Terminal animation
-function initTerminal() {
-    const terminal = document.getElementById('terminal-content');
-    const progress = document.getElementById('cooking-progress');
-    
-    const commands = [
-        { text: 'Initializing Smart Automated Chief...', delay: 0 },
-        { text: 'Scanning Ingredients...', delay: 1500 },
-        { text: 'Selecting Optimal Cooking Parameters...', delay: 3000 },
-        { text: 'Cooking in Progress...', delay: 4500 },
-        { text: '✅ Meal Ready! Enjoy Your AI-Cooked Dish.', delay: 7500 }
+document.addEventListener("DOMContentLoaded", function () {
+    const terminalElement = document.getElementById("terminal");
+    const lines = [
+        "Initializing AI-powered cooking system...",
+        "Loading smart recipe database...",
+        "Calibrating precision cooking sensors...",
+        "AI Chef is ready! Start your effortless cooking now!"
     ];
     
-    let progressValue = 0;
-    const progressInterval = setInterval(() => {
-        if (progressValue < 100) {
-            progressValue += 1;
-            progress.style.width = progressValue + '%';
-        } else {
-            clearInterval(progressInterval);
-        }
-    }, 80);
-    
-    commands.forEach((command, index) => {
-        setTimeout(() => {
-            const line = document.createElement('p');
-            line.innerHTML = `<span class="prompt">$</span> <span id="text${index + 1}">${command.text}</span>`;
-            terminal.appendChild(line);
-            
-            // Scroll to bottom of terminal
-            terminal.scrollTop = terminal.scrollHeight;
-            
-            // Add typewriter effect
-            if (index < commands.length - 1) {
-                const textElement = document.getElementById(`text${index + 1}`);
-                const text = textElement.textContent;
-                textElement.textContent = '';
-                
-                let i = 0;
-                const typeInterval = setInterval(() => {
-                    if (i < text.length) {
-                        textElement.textContent += text.charAt(i);
-                        i++;
-                    } else {
-                        clearInterval(typeInterval);
-                    }
-                }, 30);
+    let currentLine = 0;
+
+    function typeLine(lineIndex) {
+        if (lineIndex >= lines.length) return; // Stop when all lines are typed
+
+        let text = lines[lineIndex];
+        let charIndex = 0;
+        let newLine = document.createElement("p");
+        terminalElement.appendChild(newLine);
+
+        function typeChar() {
+            if (charIndex < text.length) {
+                newLine.textContent += text[charIndex];
+                charIndex++;
+                setTimeout(typeChar, 50); // Adjust typing speed
+            } else {
+                // After current line is fully typed, move to the next line
+                setTimeout(() => typeLine(lineIndex + 1), 500);
             }
-        }, command.delay);
-    });
-}
+        }
+
+        typeChar(); // Start typing the current line
+    }
+
+    // **Trigger animation only when terminal section is in view**
+    function handleScroll() {
+        const terminalSection = document.getElementById("terminal-section");
+        const rect = terminalSection.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom >= 0) {
+            window.removeEventListener("scroll", handleScroll); // Run once
+            typeLine(currentLine); // Start animation
+        }
+    }
+
+    window.addEventListener("scroll", handleScroll);
+});
 
 // Initialize particles background
 function initParticles() {
