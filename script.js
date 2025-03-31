@@ -17,6 +17,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize product hover effects
     initProductHover();
+    initHeroBackgroundInteraction();
+});
+
+// Initialize hero section background interaction
+function initHeroBackgroundInteraction() {
+    const heroSection = document.querySelector('.hero-section');
+    const heroBackground = document.querySelector('.hero-background');
+
+    if (heroSection && heroBackground) {
+        heroSection.addEventListener('mousemove', (e) => {
+            const { left, top, width, height } = heroSection.getBoundingClientRect();
+            const x = (e.clientX - left) / width;
+            const y = (e.clientY - top) / height;
+
+            const translateX = (x - 0.5) * 30; // Adjust values for desired effect
+            const translateY = (y - 0.5) * 30; // Adjust values for desired effect
+
+            gsap.to(heroBackground, {
+                duration: 0.5,
+                x: translateX,
+                y: translateY,
+                ease: 'power1.out'
+            });
+        });
+
+        heroSection.addEventListener('mouseleave', () => {
+            gsap.to(heroBackground, {
+                duration: 0.5,
+                x: 0,
+                y: 0,
+                ease: 'power1.out'
+            });
+        });
+    }
+}
+
+// Call the function after DOM content is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initHeroBackgroundInteraction();
 });
 
 // Initialize GSAP animations
